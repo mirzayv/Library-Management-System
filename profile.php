@@ -61,8 +61,8 @@ $conn->close();
                     <li class="nav-item active">
                         <a class="nav-link" href="profile.php?member_id=<?php echo $member_id; ?>">Profile</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="borrowings.php?member_id=<?php echo $member_id; ?>">Borrowings</a>
+                    <li>
+                        <a href="logout.php" class="nav-link">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -89,6 +89,8 @@ $conn->close();
                 </tr>
             </tbody>
         </table>
+
+        <a class="btn btn-primary" href="edit_profile.php">Edit Profile</a>
     </section>
 
     <!-- Footer -->
