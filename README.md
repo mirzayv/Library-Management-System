@@ -19,7 +19,7 @@ The Library Management System is a web application that allows users to manage b
 
 ## Getting Started
 
-1. Clone the repository: git clone `[https://github.com/your-username/library-management-system.git](https://github.com/mirzayv/Library-Management-System.git)`
+1. Clone the repository: git clone `https://github.com/mirzayv/Library-Management-System.git`
 
 2. Import the database:
 
@@ -38,7 +38,7 @@ The Library Management System is a web application that allows users to manage b
 
 5. Access the application:
 
-- Open a web browser and navigate to `http://localhost/library-management-system`.
+- Open a web browser and navigate to `http://localhost/Library-Management-System`.
 
 ## Project Structure
 
