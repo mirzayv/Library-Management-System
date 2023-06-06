@@ -12,8 +12,6 @@ if (!isset($_SESSION['username'])) {
 
 if ($_SESSION['role'] === 'admin') {
     header("Location: dashboard.php");
-} else {
-    header("Location: index.php");
 }
 
 // Retrieve the member ID from the database
