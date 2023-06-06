@@ -1,6 +1,5 @@
 <?php
 require_once "db_connection.php";
-// Start the session
 session_start();
 
 // Check if the user is logged in
@@ -11,17 +10,19 @@ if (!isset($_SESSION['username'])) {
 }
 
 // Fetch all borrowings from the database
-$stmt = $conn->prepare("SELECT borrowings.borrowing_id, books.ISBN, books.title, members.username, borrowings.borrow_date, borrowings.due_date, borrowings.return_date FROM borrowings INNER JOIN books ON borrowings.book_id = books.book_id INNER JOIN members ON borrowings.member_id = members.member_id");
+$stmt = $conn->prepare("SELECT borrowings.*, books.ISBN, books.title, members.username FROM borrowings
+                        INNER JOIN books ON borrowings.book_id = books.book_id
+                        INNER JOIN members ON borrowings.member_id = members.member_id");
 $stmt->execute();
 $borrowings = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
-// Check if the return form is submitted
+// Check if the return button is clicked
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['return'])) {
     // Retrieve the borrowing ID
     $borrowingId = $_POST['borrowing_id'];
 
-    // Retrieve the book details from the borrowing
+    // Retrieve the book ID from the borrowing record
     $stmt = $conn->prepare("SELECT book_id FROM borrowings WHERE borrowing_id = ?");
     $stmt->bind_param("i", $borrowingId);
     $stmt->execute();
@@ -30,36 +31,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['return'])) {
     $bookId = $row['book_id'];
     $stmt->close();
 
-    // Check if the available copies are sufficient to return the book
-    $stmt = $conn->prepare("SELECT available_copies FROM books WHERE book_id = ?");
-    $stmt->bind_param("i", $bookId);
+    // Update the borrowings table with the return date
+    $stmt = $conn->prepare("UPDATE borrowings SET return_date = CURRENT_DATE() WHERE borrowing_id = ?");
+    $stmt->bind_param("i", $borrowingId);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $availableCopies = $row['available_copies'];
     $stmt->close();
 
-    if ($availableCopies <= 0) {
-        // If available copies are less than or equal to 0, display an error message
-        $error = "Error: Book is already returned.";
-    } else {
-        // Decrease the available copies of the book
-        $stmt = $conn->prepare("UPDATE books SET available_copies = available_copies - 1 WHERE book_id = ?");
-        $stmt->bind_param("i", $bookId);
-        $stmt->execute();
-        $stmt->close();
+    // Update the available copies in the books table by incrementing
+    $stmt = $conn->prepare("UPDATE `books` SET `available_copies` = `available_copies` + 1 WHERE `books`.`book_id` = ?");
+    $stmt->bind_param("i", $bookId);
+    $stmt->execute();
+    $stmt->close();
 
-        // Update the borrowing record with the return date
-        $returnDate = date('Y-m-d');
-        $stmt = $conn->prepare("UPDATE borrowings SET return_date = ? WHERE borrowing_id = ?");
-        $stmt->bind_param("si", $returnDate, $borrowingId);
-        $stmt->execute();
-        $stmt->close();
-
-        // Redirect to the borrowings.php page
-        header("Location: borrowings.php");
-        exit();
-    }
+    // Redirect to the borrowings.php page
+    header("Location: borrowings.php");
+    exit();
 }
 ?>
 

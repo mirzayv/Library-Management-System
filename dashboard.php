@@ -32,9 +32,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $borrowedDate = $_POST['borrowed_date'];
     $dueDate = $_POST['due_date'];
 
+    // Prepare the SQL statement to retrieve the book ID
+    $stmt = $conn->prepare("SELECT book_id FROM books WHERE isbn = ?");
+    $stmt->bind_param("s", $bookISBN);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        // Book not found, show an error message
+        $error = "Book not found.";
+        $stmt->close();
+        exit();
+    }
+
+    // Retrieve the book ID
+    $row = $result->fetch_assoc();
+    $bookId = $row['book_id'];
+    $stmt->close();
+
+    // Decrement the available_copies value for the book in the books table
+    $stmt = $conn->prepare("UPDATE books SET available_copies = available_copies - 1 WHERE book_id = ?");
+    $stmt->bind_param("i", $bookId);
+    $stmt->execute();
+
     // Prepare the SQL statement to add the borrowing
-    $stmt = $conn->prepare("INSERT INTO borrowings (book_id, member_id, borrow_date, due_date) VALUES ((SELECT book_id FROM books WHERE ISBN = ?), (SELECT member_id FROM members WHERE username = ?), ?, ?)");
-    $stmt->bind_param("ssss", $bookISBN, $memberUsername, $borrowedDate, $dueDate);
+    $stmt = $conn->prepare("INSERT INTO borrowings (book_id, member_id, borrow_date, due_date) VALUES (?, (SELECT member_id FROM members WHERE username = ?), ?, ?)");
+    $stmt->bind_param("isss", $bookId, $memberUsername, $borrowedDate, $dueDate);
     $stmt->execute();
 
     // Close the prepared statement
@@ -45,8 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-// Close the database connection
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -86,6 +107,11 @@ $conn->close();
     <!-- Add Borrowing Form -->
     <div class="container mt-4">
         <h2>Add Borrowing</h2>
+        <?php if (isset($error)): ?>
+    <div class="alert alert-danger" role="alert">
+        <?php echo $error; ?>
+    </div>
+<?php endif; ?>
         <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
             <div class="row">
                 <div class="col-md-6">

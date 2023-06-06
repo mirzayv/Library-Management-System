@@ -11,7 +11,7 @@ if (!isset($_SESSION['username'])) {
 }
 
 // Fetch all books from the database
-$stmt = $conn->prepare("SELECT *, (SELECT COUNT(*) FROM borrowings WHERE borrowings.book_id = books.book_id) AS borrowed_count, total_copies - (SELECT COUNT(*) FROM borrowings WHERE borrowings.book_id = books.book_id) AS available_copies FROM books");
+$stmt = $conn->prepare("SELECT * FROM `books`");
 $stmt->execute();
 $books = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
