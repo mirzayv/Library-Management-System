@@ -10,6 +10,12 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+if ($_SESSION['role'] === 'admin') {
+    header("Location: dashboard.php");
+} else {
+    header("Location: index.php");
+}
+
 // Retrieve the member ID from the database
 $stmt = $conn->prepare("SELECT member_id FROM members WHERE username = ?");
 $stmt->bind_param("s", $_SESSION['username']);
@@ -47,11 +53,17 @@ $conn->close();
             <a class="navbar-brand" href="index.php">Library Management System</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="books.php">Books</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">Home</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="books.php">Books</a>
+                    </li>
+                    <li class="nav-item active">
                         <a class="nav-link" href="profile.php?member_id=<?php echo $member_id; ?>">Profile</a>
+                    </li>
+                    <li>
+                        <a href="logout.php" class="nav-link">Logout</a>
                     </li>
                 </ul>
             </div>
