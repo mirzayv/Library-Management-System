@@ -73,6 +73,7 @@ $conn->close();
         <h2>Welcome, <?php echo $_SESSION['username']; ?></h2>
         <h3>Your Borrowings:</h3>
 
+        <?php if (count($borrowings) > 0): ?>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -91,6 +92,9 @@ $conn->close();
                 <?php endforeach; ?>
             </tbody>
         </table>
+    <?php else: ?>
+        <p>You don't have any borrowings at the moment.</p>
+    <?php endif; ?>
     </section>
 
     <!-- Footer -->

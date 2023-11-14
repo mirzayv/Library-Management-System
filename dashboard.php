@@ -89,6 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <li class="nav-item">
                         <a class="nav-link" href="manage_books.php">Books</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="add_book.php">Add book</a>
+                    </li>
                     <li class="nav-item active">
                         <a class="nav-link" href="members.php">Members</a>
                     </li>

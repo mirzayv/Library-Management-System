@@ -80,21 +80,27 @@ $conn->close();
         </form>
 
         <!-- Books -->
-        <div class="row">
-            <?php foreach ($books as $book): ?>
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title"><?php echo $book['title']; ?></h5>
-                            <p class="card-text">Author: <?php echo $book['author']; ?></p>
-                            <?php if ($book['available_copies'] == 0): ?>
-                                <a href="#" class="btn btn-primary disabled">Unavailable</a>  
-                            <?php endif; ?>
-                        </div>
+        <!-- Books -->
+<div class="row">
+    <?php foreach ($books as $book): ?>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><?php echo $book['title']; ?></h5>
+                    <p class="card-text">Author: <?php echo $book['author']; ?></p>
+                    <?php if ($book['available_copies'] == 0): ?>
+                        <a href="#" class="btn btn-primary disabled">Unavailable</a>  
+                    <?php endif; ?>
+                </div>
+                <div class="card-footer">
+                    <div class="btn btn-primary">
+                        Available copies: <?php echo $book['available_copies']; ?>
                     </div>
                 </div>
-            <?php endforeach; ?>
+            </div>
         </div>
+    <?php endforeach; ?>
+</div>
     </section>
 
     <!-- Include Bootstrap JS -->
